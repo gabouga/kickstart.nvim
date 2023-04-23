@@ -9,7 +9,6 @@
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-
   -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
@@ -22,7 +21,6 @@ return {
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
   },
-
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
@@ -81,5 +79,19 @@ return {
 
     -- Install golang specific config
     require('dap-go').setup()
+
+    dap.adapters.php = {
+      type = 'executable',
+      command = 'node',
+      args = { 'C:\\Users\\franc\\vscode-php-debug\\out\\phpDebug.js' }
+    }
+    dap.configurations.php = {
+      {
+        type = 'php',
+        name = 'Listen for XDebug',
+        request = 'launch',
+        port = '9003'
+      }
+    }
   end,
 }
