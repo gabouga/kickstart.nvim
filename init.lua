@@ -161,6 +161,10 @@ require('lazy').setup({
   --    An additional note is that if you only copied in the `init.lua`, you can just comment this line
   --    to get rid of the warning telling you that there are not plugins in `lua/custom/plugins/`.
   { import = 'custom.plugins' },
+
+  -- Harpoon
+  'nvim-lua/plenary.nvim',
+  'ThePrimeagen/harpoon',
 }, {})
 require 'nvim-treesitter.install'.compilers = { "clang" }
 -- [[ Setting options ]]
@@ -212,6 +216,12 @@ vim.o.termguicolors = true
 
 -- greatest keymap ever
 vim.keymap.set("v", "<leader>p", "\"_dP")
+
+-- Harpoon Keymaps
+-- vim.keymap.set({ 'n' }, '<C-H>', require('harpoon.mark').add_file)
+-- vim.keymap.set({ 'n' }, '<C-K>', require('harpoon.ui').toggle_quick_menu)
+-- vim.keymap.set({ 'n' }, '<C-h>', require('harpoon.ui').nav_prev)
+-- vim.keymap.set({ 'n' }, '<C-l>', require('harpoon.ui').nav_next)
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
@@ -393,6 +403,9 @@ local on_attach = function(_, bufnr)
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
+  nmap('<leader>f', function()
+    vim.lsp.buf.format { async = true }
+  end, '[F]ormat Document (async)')
 
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
