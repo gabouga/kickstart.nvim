@@ -58,8 +58,22 @@ require('lazy').setup({
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'hrsh7th/nvim-cmp'
+    },
   },
+  {
+    'L3MON4D3/LuaSnip',
+    dependencies = { "rafamadriz/friendly-snippets" },
+  },
+  -- Formatting for nvim-cmp
+  'onsails/lspkind.nvim',
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim',          opts = {} },
@@ -165,6 +179,10 @@ require('lazy').setup({
   -- Harpoon
   'nvim-lua/plenary.nvim',
   'ThePrimeagen/harpoon',
+
+  -- nvim-cheat
+  'RishabhRD/popfix',
+  'RishabhRD/nvim-cheat.sh'
 }, {})
 require 'nvim-treesitter.install'.compilers = { "clang" }
 -- [[ Setting options ]]
@@ -178,7 +196,7 @@ vim.opt.nu = true
 vim.opt.relativenumber = true
 
 -- Always show minimum lines around cursor
-vim.opt.scrolloff = 999
+vim.opt.scrolloff = 20
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -466,6 +484,8 @@ mason_lspconfig.setup_handlers {
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
+require("luasnip.loaders.from_vscode").lazy_load()
+local lspkind = require 'lspkind'
 
 luasnip.config.setup {}
 
@@ -478,7 +498,7 @@ cmp.setup {
   mapping = cmp.mapping.preset.insert {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
+    ['<C-Space>'] = cmp.mapping.complete({}),
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
@@ -505,8 +525,40 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'buffer' },
+  },
+
+  -- Add the source of the autocomplete
+  formatting = {
+    format = lspkind.cmp_format({
+      mode = "text",
+      menu = ({
+        buffer = "[Buffer]",
+        nvim_lsp = "[LSP]",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[Lua]",
+        latex_symbols = "[Latex]",
+      })
+    }),
   },
 }
+
+-- Add the search autocomplete
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' },
+  }
+})
+-- Add the command autocomplete
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
