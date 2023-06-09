@@ -436,12 +436,6 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
-
-  -- The line below enables the text highlight of the cursor
-  -- vim.cmd [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
-  -- vim.cmd [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
-  -- vim.cmd [[autocmd CursorMovedI <buffer> lua vim.lsp.buf.clear_references()]]
-  -- vim.cmd [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
 end
 
 -- Enable the following language servers
