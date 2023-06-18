@@ -253,10 +253,16 @@ vim.o.termguicolors = true
 vim.keymap.set("v", "<leader>p", "\"_dP")
 
 -- Harpoon Keymaps
--- vim.keymap.set({ 'n' }, '<C-H>', require('harpoon.mark').add_file)
--- vim.keymap.set({ 'n' }, '<C-K>', require('harpoon.ui').toggle_quick_menu)
--- vim.keymap.set({ 'n' }, '<C-h>', require('harpoon.ui').nav_prev)
--- vim.keymap.set({ 'n' }, '<C-l>', require('harpoon.ui').nav_next)
+vim.keymap.set({ 'n' }, '<leader>m', require('harpoon.mark').add_file, { desc = 'Harpoon: [m]ark harpoon buffer' })
+vim.keymap.set({ 'n' }, '<leader>h', require('harpoon.ui').toggle_quick_menu, { desc = 'Harpoon: Open [h]arpoon ui' })
+vim.keymap.set({ 'n' }, '<leader>y', function() require('harpoon.ui').nav_file(1) end,
+  { desc = 'Harpoon: Open marked buffer 1' })
+vim.keymap.set({ 'n' }, '<leader>u', function() require('harpoon.ui').nav_file(2) end,
+  { desc = 'Harpoon: Open marked buffer 2' })
+vim.keymap.set({ 'n' }, '<leader>i', function() require('harpoon.ui').nav_file(3) end,
+  { desc = 'Harpoon: Open marked buffer 3' })
+vim.keymap.set({ 'n' }, '<leader>o', function() require('harpoon.ui').nav_file(4) end,
+  { desc = 'Harpoon: Open marked buffer 4' })
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
