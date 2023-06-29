@@ -199,7 +199,12 @@ require('lazy').setup({
 
   -- nvim-cheat
   'RishabhRD/popfix',
-  'RishabhRD/nvim-cheat.sh'
+  'RishabhRD/nvim-cheat.sh',
+  {
+    "danymat/neogen",
+    dependencies = "nvim-treesitter/nvim-treesitter",
+    config = true,
+  }
 }, {})
 require 'nvim-treesitter.install'.compilers = { "clang" }
 -- [[ Setting options ]]
@@ -338,7 +343,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim', 'html' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
@@ -470,6 +475,14 @@ local servers = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
+    },
+  },
+  tsserver = {
+    -- This doesn't work, still need to figure this out
+    init_options = {
+      preferences = {
+        importModuleSpecifierPreference = "relative",
+      },
     },
   },
 }
@@ -642,6 +655,18 @@ null_ls.setup({
     null_ls.builtins.formatting.prettierd
   }
 })
+
+require('neogen').setup {
+  enabled = true,
+  languages = {
+    cs = {
+      template = {
+        annotation_convention = "xmldoc"
+      }
+    },
+  }
+}
+vim.keymap.set('n', '<leader>g', require('neogen').generate, { desc = '[G]enerate doc' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
