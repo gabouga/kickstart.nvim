@@ -41,6 +41,26 @@ require('lazy').setup({
   -- plugin to enable :GBrowse with bitbucket
   'tommcdo/vim-fubitive',
 
+  -- DB client
+  {
+    'kristijanhusak/vim-dadbod-ui',
+    dependencies = {
+      { 'tpope/vim-dadbod', lazy = true },
+      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql', lazy = true },
+      },
+      cmd = {
+        'DBUI',
+        'DBUIToggle',
+        'DBUIAddConnection',
+        'DBUIFindBuffer',
+      },
+      init = function()
+        -- Your DBUI configuration
+        vim.g.db_ui_use_nerd_fonts = 1
+      end,
+    }
+  },
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
@@ -297,6 +317,10 @@ local setup_telescope = function(no_ignore)
         i = {
           ['<C-u>'] = false,
           ['<C-d>'] = false,
+          ['<C-c>'] = require('telescope.actions').delete_buffer,
+        },
+        n = {
+          ['<C-c>'] = require('telescope.actions').delete_buffer,
         },
       },
     },
@@ -343,7 +367,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim', 'html' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim', 'html', 'sql' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
@@ -555,6 +579,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'vim-dadbod-completion' },
     { name = 'buffer' },
   },
 
@@ -568,6 +593,7 @@ cmp.setup {
         luasnip = "[LuaSnip]",
         nvim_lua = "[Lua]",
         latex_symbols = "[Latex]",
+        ['vim-dadbod-completion'] = "[DB]",
       })
     }),
   },
