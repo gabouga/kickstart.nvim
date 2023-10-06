@@ -241,7 +241,7 @@ vim.opt.relativenumber = true
 vim.opt.scrolloff = 20
 
 -- Enable mouse mode
-vim.o.mouse = 'a'
+vim.o.mouse = ''
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -310,36 +310,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
-local setup_telescope = function(no_ignore)
-  require('telescope').setup {
-    defaults = {
-      mappings = {
-        i = {
-          ['<C-u>'] = false,
-          ['<C-d>'] = false,
-          ['<C-c>'] = require('telescope.actions').delete_buffer,
-        },
-        n = {
-          ['<C-c>'] = require('telescope.actions').delete_buffer,
-        },
+require('telescope').setup {
+  defaults = {
+    mappings = {
+      i = {
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
+        ['<C-c>'] = require('telescope.actions').delete_buffer,
+      },
+      n = {
+        ['<C-c>'] = require('telescope.actions').delete_buffer,
       },
     },
-    pickers = {
-      find_files = {
-        no_ignore = no_ignore,
-      }
-    },
-  }
-end
-setup_telescope(false)
-local find_no_ignore = function()
-  setup_telescope(true)
-  require('telescope.builtin').find_files()
-end
-local find_ignore = function()
-  setup_telescope(false)
-  require('telescope.builtin').find_files()
-end
+  },
+}
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
@@ -356,8 +340,10 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('n', '<C-p>', require('telescope.builtin').git_files, { desc = '[S]earch Git [F]iles' })
-vim.keymap.set('n', '<leader>sf', find_ignore, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>si', find_no_ignore, { desc = '[S]earch Files including [I]gnore' })
+vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>si', function()
+  require('telescope.builtin').find_files({ no_ignore = true })
+end, { desc = '[S]earch Files including [I]gnore' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
