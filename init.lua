@@ -33,7 +33,11 @@ vim.opt.rtp:prepend(lazypath)
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
+  --my own plugins
+  { dir = '~/code/neovim_plugins/myfirstplugin.nvim' },
+
   -- NOTE: First, some plugins that don't require any configuration
+  'github/copilot.vim',
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -104,7 +108,7 @@ require('lazy').setup({
   'onsails/lspkind.nvim',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim',                          opts = {} },
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -127,13 +131,16 @@ require('lazy').setup({
   'RRethy/vim-illuminate',
   'jose-elias-alvarez/null-ls.nvim',
 
+  -- {
+  --   -- Theme inspired by Atom
+  --   'navarasu/onedark.nvim',
+  --   priority = 500,
+  --   config = function()
+  --     vim.cmd.colorscheme 'onedark'
+  --   end,
+  -- },
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
+    'shaunsingh/nord.nvim',
   },
 
   {
@@ -143,7 +150,7 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
+        theme = 'nord',
         component_separators = '|',
         section_separators = '',
       },
@@ -154,15 +161,13 @@ require('lazy').setup({
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
+    -- See `:help ibl`
+    main = 'ibl',
+    opts = {},
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',  opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -221,6 +226,7 @@ require('lazy').setup({
   'RishabhRD/popfix',
   'RishabhRD/nvim-cheat.sh',
   {
+    -- Generate doc
     "danymat/neogen",
     dependencies = "nvim-treesitter/nvim-treesitter",
     config = true,
@@ -229,6 +235,9 @@ require('lazy').setup({
 require 'nvim-treesitter.install'.compilers = { "clang" }
 -- [[ Setting options ]]
 -- See `:help vim.o`
+
+vim.g.nord_italic = false
+vim.cmd.colorscheme 'nord'
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -322,6 +331,9 @@ require('telescope').setup {
         ['<C-c>'] = require('telescope.actions').delete_buffer,
       },
     },
+    preview = {
+      filesize_limit = 1,
+    },
   },
 }
 
@@ -353,7 +365,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim', 'html', 'sql' },
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'html', 'sql' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = true,
@@ -540,27 +552,9 @@ cmp.setup {
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete({}),
     ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = false,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
   },
   sources = {
     { name = 'nvim_lsp' },
@@ -678,7 +672,20 @@ require('neogen').setup {
     },
   }
 }
+
+require('Comment.ft').set('mysql', '--%s')
+
 vim.keymap.set('n', '<leader>g', require('neogen').generate, { desc = '[G]enerate doc' })
+
+-- Copilot remap tab
+vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  expr = true,
+  replace_keycodes = false
+})
+vim.g.copilot_no_tab_map = true
+
+-- Plenary test directory
+vim.keymap.set('n', '<leader>t', '<Plug>PlenaryTestFile', { desc = '[T]est directory' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
