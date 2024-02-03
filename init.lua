@@ -6,6 +6,9 @@ vim.g.maplocalleader = ' '
 vim.o.expandtab = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.opt.foldlevelstart = 20
 
 if vim.fn.isdirectory(vim.v.argv[2]) == 1 then
   vim.api.nvim_set_current_dir(vim.v.argv[2])
