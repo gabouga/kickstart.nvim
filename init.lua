@@ -8,7 +8,6 @@ vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.opt.foldlevelstart = 20
 
 if vim.fn.isdirectory(vim.v.argv[2]) == 1 then
   vim.api.nvim_set_current_dir(vim.v.argv[2])
@@ -38,6 +37,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   --my own plugins
   { dir = '~/code/neovim_plugins/myfirstplugin.nvim' },
+  { 'anuvyklack/pretty-fold.nvim',                   opts = {} },
 
   -- NOTE: First, some plugins that don't require any configuration
   'github/copilot.vim',
@@ -111,7 +111,7 @@ require('lazy').setup({
   'onsails/lspkind.nvim',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',                          opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -144,6 +144,7 @@ require('lazy').setup({
   -- },
   {
     'shaunsingh/nord.nvim',
+    priority = 1000,
   },
 
   {
@@ -152,10 +153,7 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        icons_enabled = false,
         theme = 'nord',
-        component_separators = '|',
-        section_separators = '',
       },
     },
   },
@@ -170,7 +168,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',  opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
