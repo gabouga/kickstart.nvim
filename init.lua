@@ -238,6 +238,7 @@ require 'nvim-treesitter.install'.compilers = { "clang" }
 -- See `:help vim.o`
 
 vim.g.nord_italic = false
+vim.g.nord_contrast = true
 vim.cmd.colorscheme 'nord'
 
 -- Set highlight on search
