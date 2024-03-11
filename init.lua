@@ -41,6 +41,19 @@ require('lazy').setup({
 
   -- NOTE: First, some plugins that don't require any configuration
   'github/copilot.vim',
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "canary",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },         -- for curl, log wrapper
+      { "nvim-telescope/telescope.nvim" }, -- for telescope help actions (optional)
+    },
+    opts = {
+      debug = true, -- Enable debugging
+      -- See Configuration section for rest
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -362,6 +375,11 @@ vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps' })
+vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
+vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>s.', require('telescope.builtin').oldfiles,
+  { desc = '[S]earch Recent Files ("." for repeat)' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
