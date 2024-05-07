@@ -249,7 +249,6 @@ require('lazy').setup({
     config = true,
   }
 }, {})
-require 'nvim-treesitter.install'.compilers = { "clang" }
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
