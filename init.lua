@@ -215,6 +215,7 @@ require('lazy').setup({
     },
     build = ":TSUpdate",
   },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -235,6 +236,8 @@ require('lazy').setup({
   -- Harpoon
   'nvim-lua/plenary.nvim',
   'ThePrimeagen/harpoon',
+  -- Undotree
+  'mbbill/undotree',
 
   -- nvim-cheat
   'RishabhRD/popfix',
@@ -312,6 +315,8 @@ vim.keymap.set({ 'n' }, '<leader>i', function() require('harpoon.ui').nav_file(3
   { desc = 'Harpoon: Open marked buffer 3' })
 vim.keymap.set({ 'n' }, '<leader>o', function() require('harpoon.ui').nav_file(4) end,
   { desc = 'Harpoon: Open marked buffer 4' })
+vim.keymap.set({ 'n' }, '<leader>U', vim.cmd.UndotreeShow,
+  { desc = 'Open [r]edo tree' })
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
