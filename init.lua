@@ -6,8 +6,12 @@ vim.g.maplocalleader = ' '
 vim.o.expandtab = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
-vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+
+vim.o.listchars = 'eol:↲,tab:»\\ ,trail:·,extends:<,precedes:>,conceal:┊,nbsp:␣,space:•'
+vim.o.list = true
+
+-- vim.opt.foldmethod = 'expr'
+-- vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 
 if vim.fn.isdirectory(vim.v.argv[2]) == 1 then
   vim.api.nvim_set_current_dir(vim.v.argv[2])
@@ -37,7 +41,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   --my own plugins
   { dir = '~/code/neovim_plugins/myfirstplugin.nvim' },
-  { 'anuvyklack/pretty-fold.nvim',                   opts = {} },
+  -- { 'anuvyklack/pretty-fold.nvim',                   opts = {} },
 
   -- NOTE: First, some plugins that don't require any configuration
   'github/copilot.vim',
@@ -45,14 +49,8 @@ require('lazy').setup({
     "CopilotC-Nvim/CopilotChat.nvim",
     branch = "canary",
     dependencies = {
-      { "nvim-lua/plenary.nvim" },         -- for curl, log wrapper
-      { "nvim-telescope/telescope.nvim" }, -- for telescope help actions (optional)
+      { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log wrapper
     },
-    opts = {
-      debug = true, -- Enable debugging
-      -- See Configuration section for rest
-    },
-    -- See Commands section for default commands if you want to lazy load on them
   },
 
   -- Git related plugins
@@ -77,6 +75,7 @@ require('lazy').setup({
       init = function()
         -- Your DBUI configuration
         vim.g.db_ui_use_nerd_fonts = 1
+        vim.g.db_ui_execute_on_save = 0
       end,
     }
   },
@@ -124,7 +123,7 @@ require('lazy').setup({
   'onsails/lspkind.nvim',
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim',                          opts = {} },
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -137,6 +136,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      numhl = true,
       current_line_blame = true,
       current_line_blame_opts = {
         delay = 1000,
@@ -156,7 +156,10 @@ require('lazy').setup({
   --   end,
   -- },
   {
-    'shaunsingh/nord.nvim',
+    -- 'shaunsingh/nord.nvim',
+    'rebelot/kanagawa.nvim',
+    -- 'catppuccin/nvim',
+    -- name = "catppuccin",
     priority = 1000,
   },
 
@@ -166,7 +169,7 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        theme = 'nord',
+        theme = 'kanagawa',
       },
     },
   },
@@ -181,7 +184,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',    opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -189,20 +192,10 @@ require('lazy').setup({
     version = '*',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons' }
-  },
-
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-  -- Only load if `make` is available. Make sure you have the system
-  -- requirements installed.
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    -- NOTE: If you are having trouble with this installation,
-    --       refer to the README for telescope-fzf-native for more instructions.
-    build = 'make',
-    cond = function()
-      return vim.fn.executable 'make' == 1
-    end,
+      'nvim-tree/nvim-web-devicons',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
+      -- solution for windows https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/118
+    }
   },
 
   {
@@ -247,14 +240,32 @@ require('lazy').setup({
     "danymat/neogen",
     dependencies = "nvim-treesitter/nvim-treesitter",
     config = true,
-  }
+  },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {},
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    }
+  },
+  {
+    'stevearc/oil.nvim',
+    opts = {
+      default_file_explorer = false,
+    },
+  },
+  {
+    "itchyny/vim-qfedit",
+  },
 }, {})
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+
 vim.g.nord_italic = false
 vim.g.nord_contrast = true
-vim.cmd.colorscheme 'nord'
+vim.cmd.colorscheme 'kanagawa'
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -272,7 +283,7 @@ vim.o.mouse = ''
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
+-- vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -297,6 +308,15 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- Set the formatoptions to not add comment when inserting a new line using `o` or `O`
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  group = vim.api.nvim_create_augroup('FormatOptions', { clear = true }),
+  pattern = '*',
+  callback = function()
+    vim.opt.formatoptions:remove("o")
+  end,
+})
 
 -- [[ Basic Keymaps ]]
 
@@ -353,14 +373,33 @@ require('telescope').setup {
     preview = {
       filesize_limit = 1,
     },
+    layout_config = {
+      horizontal = {
+        width = 0.99,
+        height = 0.99,
+      },
+    },
+  },
+  pickers = {
+    find_files = {
+      theme = 'ivy',
+    },
+    live_grep = {
+      theme = 'ivy',
+    },
+  },
+  extensions = {
+    fzf = {
+      fuzzy = true,
+      override_generic_sorter = true,
+      override_file_sorter = true,
+      case_mode = 'smart_case',
+    },
   },
 }
-
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
+require('telescope').load_extension('fzf')
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
@@ -375,6 +414,7 @@ vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { des
 vim.keymap.set('n', '<leader>si', function()
   require('telescope.builtin').find_files({ no_ignore = true })
 end, { desc = '[S]earch Files including [I]gnore' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').git_branches, { desc = '[S]earch git [B]ranches' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
@@ -523,7 +563,7 @@ local servers = {
       telemetry = { enable = false },
     },
   },
-  tsserver = {
+  ts_ls = {
     -- This doesn't work, still need to figure this out
     init_options = {
       preferences = {
@@ -710,6 +750,19 @@ vim.g.copilot_no_tab_map = true
 
 -- Plenary test directory
 vim.keymap.set('n', '<leader>t', '<Plug>PlenaryTestFile', { desc = '[T]est directory' })
+
+-- kristijanhusak/vim-dadbod-ui' config
+-- disable fold in output buffer and delete mysql warning
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "dbout",
+  callback = function()
+    vim.wo.foldenable = false
+    vim.cmd "set modifiable"
+    vim.cmd "g/Using a password on the command line interface can be insecure/d"
+  end,
+})
+
+require 'nvim-treesitter.install'.compilers = { "clang", "gcc" }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
