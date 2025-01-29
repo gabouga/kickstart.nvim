@@ -44,13 +44,13 @@ require('lazy').setup({
   -- { 'anuvyklack/pretty-fold.nvim',                   opts = {} },
 
   -- NOTE: First, some plugins that don't require any configuration
-  'github/copilot.vim',
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "canary",
     dependencies = {
+      { 'github/copilot.vim' },
       { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log wrapper
     },
+    opts = {},
   },
 
   -- Git related plugins
@@ -490,6 +490,22 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.blade = {
+  install_info = {
+    url = "https://github.com/EmranMR/tree-sitter-blade",
+    files = { "src/parser.c" },
+    branch = "main",
+  },
+  filetype = "blade"
+}
+
+vim.filetype.add({
+  pattern = {
+    [".*%.blade%.php"] = "blade",
+  },
+})
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
