@@ -145,7 +145,18 @@ require('lazy').setup({
   },
   -- Highlight references using LSP, regex
   'RRethy/vim-illuminate',
-  'jose-elias-alvarez/null-ls.nvim',
+  {
+    'nvimtools/none-ls.nvim',
+    config = function()
+      local null_ls = require('null-ls')
+      null_ls.setup({
+        sources = {
+          null_ls.builtins.formatting.prettierd,
+          null_ls.builtins.formatting.blade_formatter,
+        }
+      })
+    end,
+  },
 
   -- {
   --   -- Theme inspired by Atom
@@ -727,20 +738,6 @@ require('illuminate').configure({
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
-
--- Configure null-ls lsp with eslint_d and prettierd
-local status, null_ls = pcall(require, "null-ls")
-if (not status) then return end
-
-null_ls.setup({
-  sources = {
-    null_ls.builtins.diagnostics.eslint_d.with({
-      diagnostics_format = '[eslint] #{m}\n(#{c})'
-    }),
-    null_ls.builtins.diagnostics.fish,
-    null_ls.builtins.formatting.prettierd
-  }
-})
 
 require('neogen').setup {
   enabled = true,
